@@ -6,6 +6,7 @@
 - Provide one complete Google Drive weight file with configuration, vocabulary, graph, environment, and checksums in the model folder.
 - Include a GPU-validated Jupyter workflow for sample embeddings, contextual gene embeddings, and expression predictions using synthetic example counts.
 - Match the original BulkFormer notebook's short-cell style and retain executed GPU outputs for data previews, missing-gene counts, and all three feature types.
+- Emphasize complete coding-gene input, the recommended ≤10% missingness target, and full-transcriptome encoding before HVG/DEG selection and pooling.
 - Publish retained frozen-feature phenotype comparisons with bulkformer-147M on identical samples, fold assignments, and classifier settings.
 - Organize inference, notebooks, environments, documentation, figures, download metadata, and benchmark records into dedicated directories.
 

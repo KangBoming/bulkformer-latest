@@ -41,6 +41,8 @@ The pretraining corpus contains 719,174 profiles from ARCHS4, GDC, GTEx, and DiS
 
 Stage1 masks 5–15% of available expression positions independently per sample; measured zeros can be selected, and unavailable genes are excluded from the loss. The objective is MSE on masked, available positions. Training used BF16, AdamW, a global batch size of 96, and a linear warmup followed by cosine decay. This download contains the selected Stage1 weights.
 
+The sampled masking rate averages approximately 10%, in addition to any source-unavailable genes. For inference, provide as complete a protein-coding bulk transcriptome as possible, matching the released vocabulary. We recommend ≤10% missing genes per sample as a practical coverage target; measured zeros count as observed genes. More complete coding-gene coverage preserves more transcriptome context, while downstream performance also depends on the dataset and task.
+
 ## Frozen-feature phenotype evaluation
 
 These historical results were measured on the exact released checkpoint using mean pooling over available genes and a fixed cuML random forest: 500 trees, maximum depth 16, `max_features="sqrt"`, `min_samples_leaf=2`, and seed 42. The reported score is **pooled out-of-fold weighted F1**, across 10 folds. DiSignAtlas and TCGA use registered stratified folds; GTEx uses donor-grouped stratified folds. Encoder extraction used BF16 with batch size 32. No classifier hyperparameter search was performed.
@@ -101,12 +103,14 @@ The download manifest [bulkformer-latest.json](../../model/downloads/bulkformer-
 
 ## Input and output conventions
 
+- **Coverage:** keep all available coding-gene measurements during input preparation and encoding. Compute missingness per sample against the 19,973-gene vocabulary; absent genes and unavailable entries count as missing, while measured zeros count toward coverage.
 - **Raw counts:** use `normalize_data(counts, gene_vocab)`, with samples as rows and Ensembl gene IDs as columns. Normalization uses the released gene lengths and vocabulary-matched genes in the TPM denominator, matching the evaluation pipeline.
 - **Already normalized data:** provide natural `ln(TPM+1)` directly. Convert `log2(TPM+1)` by multiplying by `ln(2)`. Do not renormalize logarithmic values as counts.
 - **Gene alignment:** `main_gene_selection` removes Ensembl version suffixes, orders the complete axis, and fills unavailable genes or NaN entries with `-10`. Duplicate IDs after version removal require upstream resolution. Gene symbols are available for annotation but are not the input matching keys.
 - **Zeros:** measured zeros are observed values and participate in sample pooling. For a source that lacks a gene, omit its column or use NaN; filling it with zero changes the model input.
 - **Sample features:** shape `[samples, 768]`, using an observed-gene mean for each sample.
 - **Contextual gene features:** shape `[samples, selected_genes, 768]`. Selected output genes do not reduce the full gene axis processed by the encoder. Contextual vectors depend on the input sample; they differ from the static gene identity table.
+- **HVG/DEG sample features:** encode the complete available coding-gene transcriptome, select the contextual vectors of your HVGs or DEGs, then pool the observed selected genes into a sample embedding. See the [usage example](../usage.md#sample-embeddings-from-hvgs-or-degs).
 - **Expression predictions:** shape `[samples, 19973]`, on the learned `ln(TPM+1)` target scale. The head is unconstrained, so negative predictions are possible. It predicts all positions; to impute selected observed genes, set those inputs to `-10` before inference and retain their true values separately.
 
 Start with one GPU, BF16 and `batch_size=1`. This complete-gene-axis model still processes 19,973 tokens when only a few output genes are requested. Increase batch size according to available memory. The helper supports CPU FP32 and CUDA BF16/FP16/FP32.

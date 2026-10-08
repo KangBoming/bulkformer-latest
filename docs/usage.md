@@ -27,6 +27,20 @@ Provide a pandas DataFrame with samples as rows and Ensembl gene IDs as columns.
 
 `main_gene_selection` strips Ensembl version suffixes, orders the complete gene axis, and fills absent genes and NaN entries with **-10**. Measured expression zero stays **0** and is included in sample pooling. Duplicate IDs after stripping version suffixes require upstream resolution. Gene symbols are annotations; matching uses Ensembl IDs. Do not feed logarithmic values into count normalization.
 
+## Input coverage
+
+Provide as complete a **protein-coding bulk transcriptome** as possible, matching the released vocabulary. More complete coding-gene coverage supplies more transcriptome context for the model's representations. Our recommended target is **≤10% missing genes per sample**, equivalent to at least 90% coverage of the 19,973-gene vocabulary.
+
+Stage1 randomly masked 5–15% of available values, averaging approximately 10%, in addition to any source-unavailable genes. The recommended input coverage is a practical guide based on this pretraining regime; downstream performance also depends on the dataset and task.
+
+Missingness includes absent genes and unavailable entries; measured zeros remain observed. For the complete, aligned NumPy array used below:
+
+```python
+missing_rate = (aligned_expression == -10).mean(axis=1)
+```
+
+Keep all available coding-gene measurements through input preparation and encoding. Choose an HVG or DEG subset when selecting the contextual output embeddings for pooling.
+
 ## Load and extract
 
 ```python
@@ -53,6 +67,31 @@ expression_predictions = extract_feature(
 | `expr_level` | samples × 19,973 | Predictions on the learned natural `ln(TPM+1)` scale |
 
 No additional random masking is applied during extraction. For imputation, set selected inputs to `-10` and retain their true values separately. The expression head is unconstrained and can return negative values. Static gene identity weights are a different representation from contextual gene outputs.
+
+## Sample embeddings from HVGs or DEGs
+
+Encode the complete available coding-gene transcriptome, obtain its contextual gene representations, select your HVGs or DEGs, then pool those contextual vectors. Gene selection is applied after the encoder. The input retains the complete vocabulary axis and all available expression measurements.
+
+The helper can perform output selection and mean pooling in one call:
+
+```python
+gene_list = gene_vocab["canonical_ensg"].tolist()
+selected_genes = gene_list[:8]  # Replace with the Ensembl IDs of your HVGs or DEGs.
+selected_gene_idx = [gene_list.index(gene) for gene in selected_genes]
+
+selected_sample_features = extract_feature(
+    model=model,
+    expr_array=aligned_expression,
+    output_feature_type="sample_level",
+    interested_gene_idx=selected_gene_idx,
+    aggregate_type="mean",
+    batch_size=1,
+)
+```
+
+`aligned_expression` contains all 19,973 gene positions. The encoder processes that complete input, then the helper selects the requested contextual vectors and averages the observed selected genes separately for each sample. Measured zeros are included. Each sample needs at least one observed gene in the selected set. The result has shape `samples × 768`.
+
+To inspect or save the selected contextual vectors themselves, use `output_feature_type="gene_level"` with the same full input and `interested_gene_idx`; the result has shape `samples × selected genes × 768`. The [notebook](../notebooks/bulkformer-latest_feature_extraction.ipynb) demonstrates this output selection. The published phenotype comparison uses mean pooling over all observed genes; evaluate an HVG/DEG pooling choice for your own task.
 
 ## Memory and precision
 

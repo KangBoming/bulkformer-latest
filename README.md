@@ -19,6 +19,7 @@
 <p align="center">
   <a href="https://doi.org/10.1016/j.cels.2026.101657">Paper</a> ·
   <a href="#models-and-downloads">Models</a> ·
+  <a href="#input-coverage-and-gene-selection">Input guidance</a> ·
   <a href="notebooks/bulkformer-latest_feature_extraction.ipynb">Notebook</a> ·
   <a href="#performance">Performance</a> ·
   <a href="#quick-start">Quick start</a> ·
@@ -51,6 +52,33 @@ See the [changelog](CHANGELOG.md) for the release history.
 - **Explicit input conventions.** Missing genes and measured zeros are handled separately. Sample pooling includes observed genes, including measured zeros.
 
 Architecture, pretraining, and checkpoint details are described in the [model card](docs/models/bulkformer-latest.md). The original 37M–147M models are available in the [BulkFormer repository](https://github.com/KangBoming/BulkFormer).
+
+## Input coverage and gene selection
+
+> [!IMPORTANT]
+> **Input as complete a protein-coding bulk transcriptome as possible, aligned to the released 19,973-gene vocabulary.** More complete coding-gene coverage preserves the transcriptome-wide context learned by the model and is preferred for strong downstream performance.
+>
+> **Aim for ≤10% missing genes per sample (≥90% vocabulary coverage).** Measured zero expression is an observed value and counts toward coverage. Absent genes and unavailable entries count as missing.
+
+Stage1 pretraining randomly masked **5–15% of available expression values, averaging approximately 10%**. This masking was applied in addition to genes already unavailable in each source profile. We recommend **≤10% input missingness** as a practical coverage target for reliable representations; performance also depends on the dataset and downstream task.
+
+Missingness is calculated against the **model vocabulary**, separately for each sample. After alignment, unavailable entries are `-10`; measured zeros remain `0`. Preserve all available coding-gene measurements when preparing the model input.
+
+### Representing a sample with HVGs or DEGs
+
+To form a sample embedding from highly variable genes (HVGs) or differentially expressed genes (DEGs):
+
+1. **Encode the complete available coding-gene transcriptome**, aligned to the model vocabulary.
+2. Obtain **contextual gene embeddings**, then select the embeddings corresponding to your HVGs or DEGs.
+3. **Pool the selected contextual embeddings** into a sample-level vector, using the observed selected genes in each sample.
+
+```text
+Complete coding-gene expression → BulkFormer encoder
+                               → Contextual gene embeddings
+                               → Select HVGs / DEGs → Pool → Sample embedding
+```
+
+Gene selection belongs at the **output embedding stage**. The full expression matrix supplies the context used to encode every selected gene. The API's `interested_gene_idx` selects embeddings after the full-axis encoder; it also supports mean pooling over that selected set. See the [usage example](docs/usage.md#sample-embeddings-from-hvgs-or-degs).
 
 ## Performance
 
