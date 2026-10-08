@@ -7,6 +7,7 @@
 - Include a GPU-validated Jupyter workflow for sample embeddings, contextual gene embeddings, and expression predictions using synthetic example counts.
 - Match the original BulkFormer notebook's short-cell style and retain executed GPU outputs for data previews, missing-gene counts, and all three feature types.
 - Emphasize complete coding-gene input, the recommended ≤10% missingness target, and full-transcriptome encoding before HVG/DEG selection and pooling.
+- Redraw the README architecture figure with a scientific panel layout, explicit normalization and residual paths, three readouts, and the optional HVG/DEG pooling workflow.
 - Publish retained frozen-feature phenotype comparisons with bulkformer-147M on identical samples, fold assignments, and classifier settings.
 - Organize inference, notebooks, environments, documentation, figures, download metadata, and benchmark records into dedicated directories.
 

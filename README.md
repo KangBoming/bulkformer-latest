@@ -43,9 +43,11 @@ See the [changelog](CHANGELOG.md) for the release history.
 
 ## Overview
 
-![Architecture of bulkformer-latest: bulk RNA-seq inputs, normalized gene tokens, a weighted GCN and Performer encoder, and sample, gene, and expression outputs.](docs/assets/bulkformer-latest-overview.svg)
+![Architecture of bulkformer-latest. a, Gene identity and expression encoding form normalized gene tokens. b, A weighted residual GCN and 12-layer Performer encode all 19,973 genes. c, Contextual representations provide sample embeddings, selected gene embeddings, and expression predictions. d, Optional HVG/DEG selection and pooling follow full-transcriptome encoding.](docs/assets/bulkformer-latest-overview.png)
 
-<p align="center"><sub>Architecture of <strong>bulkformer-latest</strong>. The full gene axis is processed for every sample; the three outputs support complementary downstream analyses.</sub></p>
+<p align="center"><sub><strong>a</strong>, Gene token construction. <strong>b</strong>, Graph and attention encoder. <strong>c</strong>, Three output types. <strong>d</strong>, Optional HVG/DEG sample representation. All 19,973 genes are encoded before output selection; pooling uses observed genes, including measured zeros. Matrices and graph are schematic.</sub></p>
+
+<p align="center"><a href="docs/assets/bulkformer-latest-overview.png">Full-size figure</a> · <a href="docs/assets/README.md">Figure details</a></p>
 
 - **Complete transcriptome context.** A weighted coexpression graph captures gene relationships, while Performer attention models dependencies across the full gene vocabulary.
 - **Three representation levels.** Extract one vector per sample, contextual vectors for selected genes, or expression predictions for all 19,973 genes.

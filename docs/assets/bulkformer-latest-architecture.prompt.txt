@@ -1,0 +1,72 @@
+Initial redesign
+Use case: scientific-educational.
+Asset type: final architecture figure for the GitHub README of bulkformer-latest.
+Primary request: completely redesign the supplied existing architecture image into an original, elegant computational biology research figure with the visual discipline of Nature Methods figures. The supplied image is the edit target and a factual reference; replace its generic four-card layout, preserve the actual scientific architecture and model identity. Make the new composition landscape, approximately 16:9, high resolution, with generous margins and excellent legibility when displayed at 1000 pixels wide.
+
+Style: crisp flat scientific illustration on pure white, refined restrained blue, teal and muted ochre accents, thin dark-gray connectors with unambiguous arrowheads, subtle pale module fills, black sans-serif text, carefully aligned typography, small bold lowercase panel letters a, b, c, d. No decorative shadows, glossy rendering, large pill cards, photographic elements, distracting background, fake 3D, journal logos, or watermarks. Matrix/tensor diagrams and a small weighted gene graph should convey the computation, not decorate it. Represent symbolic arrays schematically, never as measured results. Use concise exact English labels, very clean spelling and numerals.
+
+Header: "bulkformer-latest". A smaller single line reads "101.3M parameters | 19,973 human genes | 768 hidden dimensions".
+
+Composition: three balanced main panels across the upper ~75% of the canvas with a shared left-to-right information flow. A fourth, compact workflow panel spans the bottom.
+Panel a, heading "Gene token construction":
+Show a small bulk RNA-seq matrix labeled "ln(TPM + 1)" and "19,973 coding genes".
+Show two clearly separate parallel input branches, gene identity and expression values:
+- branch 1: "Gene identity embedding" then "RMS normalization";
+- branch 2: "Sinusoidal expression encoding", "Unit RMS", and "Learned scale + coverage correction".
+The two branch outputs meet at an explicit plus junction, then "Input LayerNorm", then a directed connector into panel b. Gene identity and expression must both be supplied to the sum. Missing expression uses a zero encoding, while measured zero remains observed. Do not depict an expression embedding lookup table or a global MLP.
+Panel b, heading "Graph + attention encoder":
+A small schematic weighted gene graph above the first module, labeled "Coexpression graph", supplies the weighted GCN.
+Main modules, in this exact order:
+"Weighted GCN" with "768 → 192 → 768", followed by "LayerNorm", then a neatly stacked encoder block labeled "Performer × 12" with "12 attention heads", followed by "Output LayerNorm".
+Around the weighted GCN alone, show one clear residual bypass joining its output with a plus junction; label the GCN update "Channel-wise residual scale". The identity bypass must run from its INPUT to the output sum and not from the graph prior. Depict the weighted GCN as one block, not twelve graph layers. A directed connector from Output LayerNorm leads into panel c.
+Panel c, heading "Contextual representations":
+First show a small contextual embedding tensor labeled "19,973 × 768". Split this representation into exactly three neatly arranged readout branches:
+1. "Observed-gene mean pooling" → "Sample embedding" with "768 dimensions".
+2. "Select output genes" → "Contextual gene embeddings" with "k × 768".
+3. "Expression head" with "768 → 768 → 1" → "Expression predictions" with "19,973 values".
+These all arise from the final contextual representation. Expression predictions do NOT feed the gene/sample embedding branches. Do not imply that output gene selection removes input tokens.
+Panel d, heading "HVG / DEG sample representation":
+One especially readable compact horizontal workflow with exact labels:
+"Full coding transcriptome" → "Encode all 19,973 genes" → "Select HVG / DEG embeddings" → "Pool observed selected genes" → "768-d sample embedding".
+This is an OPTIONAL downstream use of contextual embeddings, not an extra input module or an additional trainable encoder.
+A very small footer may say "Matrices and graph are schematic." No other text.
+
+Scientific constraints: full 19,973-gene axis is encoded for every sample. Input is natural ln(TPM+1). There is one weighted residual GCN block, followed by 12 Performer layers. The gene identity branch is trainable; expression encoding is fixed sinusoidal with a learned scalar and visible-fraction correction. Sample pooling excludes missing genes and includes measured zeros. There is NO GenePT, ESM2, global transcriptome MLP, CLS/sample token, separate pathway encoder, or appended summary feature in this released model. Do not invent modules or scientific results. All arrows must match the stated computation. Put labels outside dense graphic elements and prevent any text or arrow overlap. Deliver one carefully polished finished image.
+
+Computational path correction
+Edit the supplied generated bulkformer-latest architecture figure. This is a scientific correctness correction pass. Keep its white background, landscape aspect ratio, panel layout a–d, typography, colors, matrix illustrations, graph, headings and all numerical values unchanged. Change only the computational connectors and one pooling label as follows:
+
+1. CRITICAL: panel b currently sends an arrow from the weighted GCN residual sum directly into panel c, bypassing the Performer encoder. DELETE that arrow entirely. The ONLY encoder output arrow into panel c must originate at the bottom "Output LayerNorm" box, then route rightward through the free space along the right edge of panel b and enter the contextual gene representation matrix in panel c. It must be visually obvious that the sequence is Weighted GCN residual sum → LayerNorm → Performer × 12 → Output LayerNorm → contextual gene representations. No intermediate block or sum may connect directly to panel c.
+
+2. Redraw the GCN residual path in panel b clearly: the main feature input feeds "Weighted GCN"; its output passes through "Channel-wise residual scale" and then meets the identity bypass at a small plus circle BELOW the GCN. The bypass starts at the GCN FEATURE INPUT, passes around the GCN box, and joins that same plus. The coexpression graph arrow enters the GCN from above and must not feed the residual bypass. Connect the residual plus downward into "LayerNorm", then into "Performer × 12", then "Output LayerNorm". The current direct down arrow from the GCN to LayerNorm must be replaced by the path through the residual sum. Leave enough space around connectors to avoid text overlaps; minor local vertical repositioning of encoder boxes is allowed for connector clarity, but preserve their order.
+
+3. CRITICAL: panel a expression feature branch must have an unbroken sequence "Sinusoidal expression encoding" → "Unit RMS" → "Learned scale + coverage correction" → the large plus junction. DELETE the current horizontal arrow from "Unit RMS" to that plus because it skips the scaling block. Start the expression branch output connector at the RIGHT EDGE of "Learned scale + coverage correction", route along the clear space to its right, then go up into the bottom of the large plus. The gene identity branch still feeds the top of that plus. Plus → Input LayerNorm → encoder remains.
+
+4. In panel c, replace the exact label "Contextual-gene mean pooling" with the exact label "Observed-gene mean pooling". Keep its arrow into "Sample embedding", "768 dimensions".
+
+Preserve all other labels, three output branches and optional HVG / DEG workflow. Do not introduce any new model modules or drop anything. Render clean, sharp, readable text and fully correct directed computation.
+
+Label and arrow attachment correction
+Make a narrow final correction to the supplied bulkformer-latest scientific architecture figure. Preserve the overall layout, all four panels, colors, typography, illustrations, module boxes, and all scientific values. Do NOT redesign the figure or add modules. Fix only these labels and arrow attachments:
+
+A. In panel c, the sample pooling label is misspelled. Completely replace that label with two clearly readable exact lines:
+"Mean pooling"
+"Observed genes only"
+Keep the box, arrow into Sample embedding, and 768 dimensions. Render those words exactly as written, without a hyphenated compound.
+
+B. In panel a, the gene identity branch output must originate at the RIGHT EDGE of the "RMS normalization" box, not from the "Gene identity embedding" box or from the enclosing branch border. The path must be Gene identity embedding → RMS normalization → top of the large plus → Input LayerNorm. Erase the old gene branch output connector and redraw this precise attachment. Leave the expression branch unchanged; its Sinusoidal expression encoding → Unit RMS → Learned scale + coverage correction → plus path is already correct.
+
+C. In panel b, add a short clear DOWNWARD connector from the residual plus circle immediately below Weighted GCN into the LayerNorm box immediately below that circle. The circle currently looks disconnected from LayerNorm. The whole route must read Weighted GCN plus residual → LayerNorm → Performer × 12 → Output LayerNorm. Preserve the correct GCN residual loop.
+
+D. Extend the existing final Output LayerNorm output arrow all the way to the contextual gene matrix in panel c. It must not stop at the border of panel c. Route it through the gap between panels b and c: from the RIGHT EDGE of Output LayerNorm, right to the empty inter-panel gap, then up to the lower part of the contextual matrix, then right with the arrowhead touching the LEFT EDGE of that matrix. Avoid crossing the "19,973 × 768" label beneath the matrix or the gene-axis labels. This is the sole connection from encoder to outputs; keep it unambiguous.
+
+Keep every other part intact, including all exact numbers and the optional HVG / DEG sample representation workflow. Return one sharp final image.
+
+Connector completion
+Polish only the few connector gaps in this supplied scientific architecture diagram. Do not change the words, colors, numbers, fonts, panel sizes, matrix graphics, graph, main title, or the lower HVG / DEG workflow. Do not redraw anything outside panels a and b.
+
+1. Panel a: complete the gene-identity output from the bottom "RMS normalization" box. Remove the external L-shaped connector which currently leaves the right edge of the enclosing gene identity branch at the height of "Gene identity embedding". Instead, draw a short horizontal dark-gray connector from the RIGHT EDGE of "RMS normalization" to the clear corridor immediately right of its enclosing branch; then turn downward and enter the TOP of the big plus circle. The embedding → RMS internal downward arrow stays. The expression branch already correctly exits the scaling box and stays unchanged. The identity output must visibly follow RMS normalization.
+
+2. Panel b: the residual plus circle at about x=884,y=437 is disconnected from the LayerNorm at about x=885,y=483. Move the plus circle up just 8 pixels if needed and draw a clearly visible dark-gray downward arrow from its bottom edge directly to the TOP edge of that LayerNorm. Ensure an actual dark line and arrowhead is present in the blank gap. The main path should now be a completely connected vertical sequence from the residual plus circle through LayerNorm, Performer × 12, Output LayerNorm and onward to the contextual matrix. Preserve the existing correct weighted GCN residual bypass and its scale.
+
+This is a tiny localized connector edit only. Preserve the otherwise complete illustration exactly.
