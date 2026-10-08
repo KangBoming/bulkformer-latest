@@ -157,5 +157,77 @@
         19973
       ]
     }
+  },
+  "notebook_style_revision_validation": {
+    "success": true,
+    "gpu_name": "NVIDIA A800 80GB PCIe",
+    "torch_version": "2.5.1+cu124",
+    "precision": "bf16",
+    "input_shape": [
+      4,
+      19973
+    ],
+    "output_shapes": {
+      "res1": [
+        4,
+        768
+      ],
+      "res2": [
+        4,
+        8,
+        768
+      ],
+      "res3": [
+        4,
+        19973
+      ]
+    },
+    "all_outputs_finite": true,
+    "saved_identifiers_verified": true,
+    "checkpoint_id": "v1plus-stage1-epoch17-update126055",
+    "physical_gpu": 7,
+    "notebook_path": "notebooks/bulkformer-latest_feature_extraction.ipynb",
+    "notebook_code_cells": 30,
+    "execution_counts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "executed_with": "Jupyter ipykernel",
+    "working_directory_at_kernel_start": "notebooks",
+    "saved_notebook_outputs": true,
+    "synthetic_demo_only": true,
+    "filtered_dependency_deprecation": "distutils Version classes are deprecated",
+    "filtered_optional_widget_warning": "IProgress not found",
+    "style_reference": "KangBoming/BulkFormer/main/bulkformer_extract_feature.ipynb",
+    "notebook_sha256": "a44620fc30385fc91706502fcdbe6b64d313b236239321113476a0f6ddf699e0",
+    "elapsed_seconds": 9.67087685901788
   }
 }
