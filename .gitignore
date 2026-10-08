@@ -1,0 +1,6 @@
+/model/bulkformer-latest/
+/model/*.pt
+/outputs/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/

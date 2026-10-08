@@ -1,0 +1,40 @@
+{
+  "format_version": 2,
+  "layout": "individual_files",
+  "model_directory": "bulkformer-latest",
+  "google_drive_folder": "https://drive.google.com/drive/folders/1AfekiOBNs6GzPBbA9BDlpuoolZIWbGQ2",
+  "files": {
+    "model.pt": {
+      "sha256": "0fb65ec123386ef753651cfcc43e2a64728c719307fe565a5ffe16f5d8cf3cfa",
+      "bytes": 406165934,
+      "google_drive_url": "https://drive.google.com/file/d/1ly4CNE6XHqHKSP1a5c0UGUeaSVC0Was1/view?usp=drivesdk"
+    },
+    "model_config.json": {
+      "sha256": "7942ecd57865791515ae8d3d3c285ed5c96c3856456c89ea8c2202231bb2dfff",
+      "bytes": 1079,
+      "google_drive_url": "https://drive.google.com/file/d/1Fm-rEBC3jwJWe-OKlnM9y5G-jHmm1jY0/view?usp=drivesdk"
+    },
+    "gene_vocab.csv": {
+      "sha256": "447fcecce510e1bb81e1eebf2bcfbbfefbc21e626395b003034ff70159303e40",
+      "bytes": 704213,
+      "google_drive_url": "https://drive.google.com/file/d/1iOweEpX-Ub5pIfhBVvwvpQcQwhVkOv02/view?usp=drivesdk"
+    },
+    "edge_index.pt": {
+      "sha256": "ce2eabbeb9b6f053eeae2cc994b2f6e0e03c46590b86b733f6035b346012ca1f",
+      "bytes": 10739627,
+      "google_drive_url": "https://drive.google.com/file/d/1-l-IILGstdAnK96lo6fd4IWK1xpvBa3w/view?usp=drivesdk"
+    },
+    "edge_weight.pt": {
+      "sha256": "182f34418d07e7f6e4d487068b5e466d4410baa06e28973ca667db3b5a76e61d",
+      "bytes": 2685808,
+      "google_drive_url": "https://drive.google.com/file/d/1e15aL7AX2P-QFwZmryuC1kOYvt_PwFaT/view?usp=drivesdk"
+    },
+    "manifest.json": {
+      "bytes": 1623,
+      "sha256": "37d00cd00e3a544fcd4b21e57d974196305765741bfcb9f3f527a38a85bb4b0b",
+      "google_drive_url": "https://drive.google.com/file/d/1nk-Db3Xzfcbgs8Cv2AnzX-ST-H6L_o32/view?usp=drivesdk"
+    }
+  },
+  "model_name": "bulkformer-latest",
+  "checkpoint_id": "v1plus-stage1-epoch17-update126055"
+}
