@@ -105,16 +105,15 @@ The [Google Drive folder](https://drive.google.com/drive/folders/1wKXEgKk_oPkmaC
 
 ## PRIMO and model selection
 
-Official bulk leaderboard snapshot, **2026-11-04**, 19 entries; all 44 datasets and 6,390 samples covered:
+[PRIMO](https://github.com/PRIMOmics/primo-eval) evaluates omics foundation-model representations on patient-level drug-development tasks. Models provide sample embeddings, which are scored using the same downstream predictor; most labels remain private. Its bulk RNA-seq board covers **five task families**: clinical score prediction, molecular endotype classification, perturbation response prediction, prognosis, and treatment outcome prediction.
 
-| Model pipeline | Rank | Elo |
-|---|---:|---:|
-| BulkFormer-Atlas + HVG | **1 / 19** | **1027** |
-| BulkFormer-Latest + HVG | **6 / 19** | **985** |
-| BulkFormer-Atlas | 8 / 19 | 972 |
-| BulkFormer-Latest | 14 / 19 | 838 |
+As of **2026-11-04**, the official bulk board reports **59 tasks, 39 cohorts and 4,922 patients**, with **19 leaderboard entries**. Our full feature submissions cover **44 datasets / 6,390 samples**; the screenshot reports the official scored view.
 
-The external aliases are `BulkFormer-variant` for Atlas and `BulkFormer-V3Plus` for Latest. Latest's submission uses this same epoch-19 checkpoint. `+ HVG` denotes concatenation with the organizer's 1,200-gene expression baseline. Rankings can change; the first-place result applies to Atlas **with** HVG.
+[![Official PRIMO bulk leaderboard: 59 tasks, 39 cohorts and 4,922 patients, captured on 2026-11-04](docs/assets/primo-official-bulk-leaderboard-20261104.png)](https://primomics-primo-eval.hf.space/?tab=leaderboard)
+
+*Direct screenshot of the official page; original names and all ranked entries are preserved. Click to open the live board. [Full-resolution image](docs/assets/primo-official-bulk-leaderboard-20261104.png) · [Capture record](docs/assets/primo-official-bulk-leaderboard-20261104.json).*
+
+The external aliases are `BulkFormer-variant` for Atlas and `BulkFormer-V3Plus` for Latest. Latest's submission uses this same epoch-19 checkpoint; the older rows named `BulkFormer-Latest` belong to the archived release. `+ HVG` denotes concatenation with the organizer's 1,200-gene expression baseline. Rankings can change; the first-place result applies to Atlas **with** HVG.
 
 Atlas has the stronger PRIMO aggregate sample-level result. Latest's gene-level workflow recommendation follows its architecture and objective; a matched gene-level Atlas-versus-Latest benchmark is still needed before claiming superiority. [Full protocol and category results](benchmarks/primo/README.md) · [Live board](https://primomics-primo-eval.hf.space/?tab=leaderboard).
 
