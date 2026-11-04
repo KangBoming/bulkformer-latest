@@ -1,250 +1,127 @@
-<h1 align="center">bulkformer-latest</h1>
-
+<h1 align="center">BulkFormer-Latest</h1>
+<p align="center"><strong>Contextual gene representations from complete bulk transcriptomes</strong></p>
 <p align="center">
-  <strong>A pretrained foundation model for human bulk transcriptomes</strong>
+<a href="https://github.com/KangBoming/BulkFormer">BulkFormer model family</a> ·
+<a href="docs/models/latest.md">Model card</a> ·
+<a href="https://drive.google.com/drive/folders/1wKXEgKk_oPkmaCITi4ASs-05FHl6qkvZ">Weights</a> ·
+<a href="notebooks/bulkformer-latest_feature_extraction.ipynb">GPU notebook</a>
 </p>
 
-<p align="center">
-  Boming Kang · Rui Fan · Meizheng Yi · Chunmei Cui · Qinghua Cui<br>
-  <em>A new checkpoint in the BulkFormer model family</em>
-</p>
+**BulkFormer-Latest** is a 154.55M-parameter model for human bulk RNA-seq. It encodes the full coding transcriptome to produce **768-dimensional contextual gene embeddings** and expression predictions. Use it for gene-level features, gene-set analyses and expression recovery. For sample-level representation learning, start with **[BulkFormer-Atlas](https://github.com/KangBoming/BulkFormer)**, the family's sample-oriented model.
 
-<p align="center">
-  <a href="https://doi.org/10.1016/j.cels.2026.101657"><img src="https://img.shields.io/badge/BulkFormer_paper-Cell_Systems-245C6E?style=flat-square" alt="BulkFormer reference paper: Cell Systems"></a>
-  <a href="docs/models/bulkformer-latest.md"><img src="https://img.shields.io/badge/Model-bulkformer--latest-167B80?style=flat-square" alt="Released model: bulkformer-latest"></a>
-  <a href="configs/bulkformer-latest.yaml"><img src="https://img.shields.io/badge/Python-3.12-3269A8?style=flat-square" alt="Python 3.12"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Code_license-MIT-52657A?style=flat-square" alt="Code license: MIT"></a>
-</p>
+## Release — 2026-11-04
 
-<p align="center">
-  <a href="https://doi.org/10.1016/j.cels.2026.101657">Paper</a> ·
-  <a href="#models-and-downloads">Models</a> ·
-  <a href="#input-coverage-and-gene-selection">Input guidance</a> ·
-  <a href="notebooks/bulkformer-latest_feature_extraction.ipynb">Notebook</a> ·
-  <a href="#performance">Performance</a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="docs/README.md">Documentation</a>
-</p>
+This release publishes **epoch 19 / update 140,885**, the best completed checkpoint by mean ID/OOD validation MSE at 10% masking. Its immutable identity is `latest-20261104-epoch19-update140885`. The former 101.3M Latest release is archived under [v1plus-20261009](https://github.com/KangBoming/bulkformer-latest/tree/v1plus-20261009); its Google Drive weights remain unchanged. The current model uses a new architecture, vocabulary resources and package API. [Migration guide](docs/migration.md).
 
----
+## Model architecture
 
-**bulkformer-latest** is a pretrained foundation model for **human bulk RNA-seq** in the [BulkFormer model family](https://github.com/KangBoming/BulkFormer). It combines a weighted gene coexpression graph with Performer attention to learn representations across the complete transcriptome. This repository provides its inference code, complete model resources, GPU notebook, and evaluation records.
-
-## News
-
-> [!NOTE]
-> **2026-10-09 — We release `bulkformer-latest`.**
->
-> Our new public model has **101.3M parameters**, covers **19,973 human genes**, and produces **768-dimensional representations** with a weighted GCN and 12-layer Performer encoder. It provides sample embeddings, contextual gene embeddings, and expression predictions. The released weights correspond to **V1 Plus Stage1 epoch 17**.
-
-**[Model card](docs/models/bulkformer-latest.md)** · **[Complete weights](https://drive.google.com/file/d/1ly4CNE6XHqHKSP1a5c0UGUeaSVC0Was1/view?usp=drivesdk)** · **[Configuration & resources](https://drive.google.com/drive/folders/1AfekiOBNs6GzPBbA9BDlpuoolZIWbGQ2)** · **[Usage notebook](notebooks/bulkformer-latest_feature_extraction.ipynb)**
-
-See the [changelog](CHANGELOG.md) for the release history.
-
-## Overview
-
-![Architecture of bulkformer-latest. a, Gene identity and expression encoding form normalized gene tokens. b, A weighted residual GCN and 12-layer Performer encode all 19,973 genes. c, Contextual representations provide sample embeddings, selected gene embeddings, and expression predictions. d, Optional HVG/DEG selection and pooling follow full-transcriptome encoding.](docs/assets/bulkformer-latest-overview.png)
-
-<p align="center"><sub><strong>a</strong>, Gene token construction. <strong>b</strong>, Graph and attention encoder. <strong>c</strong>, Three output types. <strong>d</strong>, Optional HVG/DEG sample representation. All 19,973 genes are encoded before output selection; pooling uses observed genes, including measured zeros. Matrices and graph are schematic.</sub></p>
-
-<p align="center"><a href="docs/assets/bulkformer-latest-overview.png">Full-size figure</a> · <a href="docs/assets/README.md">Figure details</a></p>
-
-- **Complete transcriptome context.** A weighted coexpression graph captures gene relationships, while Performer attention models dependencies across the full gene vocabulary.
-- **Three representation levels.** Extract one vector per sample, contextual vectors for selected genes, or expression predictions for all 19,973 genes.
-- **Explicit input conventions.** Missing genes and measured zeros are handled separately. Sample pooling includes observed genes, including measured zeros.
-
-Architecture, pretraining, and checkpoint details are described in the [model card](docs/models/bulkformer-latest.md). The original 37M–147M models are available in the [BulkFormer repository](https://github.com/KangBoming/BulkFormer).
-
-## Input coverage and gene selection
-
-> [!IMPORTANT]
-> **Input as complete a protein-coding bulk transcriptome as possible, aligned to the released 19,973-gene vocabulary.** More complete coding-gene coverage preserves the transcriptome-wide context learned by the model and is preferred for strong downstream performance.
->
-> **Aim for ≤10% missing genes per sample (≥90% vocabulary coverage).** Measured zero expression is an observed value and counts toward coverage. Absent genes and unavailable entries count as missing.
-
-Stage1 pretraining randomly masked **5–15% of available expression values, averaging approximately 10%**. This masking was applied in addition to genes already unavailable in each source profile. We recommend **≤10% input missingness** as a practical coverage target for reliable representations; performance also depends on the dataset and downstream task.
-
-Missingness is calculated against the **model vocabulary**, separately for each sample. After alignment, unavailable entries are `-10`; measured zeros remain `0`. Preserve all available coding-gene measurements when preparing the model input.
-
-### Representing a sample with HVGs or DEGs
-
-To form a sample embedding from highly variable genes (HVGs) or differentially expressed genes (DEGs):
-
-1. **Encode the complete available coding-gene transcriptome**, aligned to the model vocabulary.
-2. Obtain **contextual gene embeddings**, then select the embeddings corresponding to your HVGs or DEGs.
-3. **Pool the selected contextual embeddings** into a sample-level vector, using the observed selected genes in each sample.
-
-```text
-Complete coding-gene expression → BulkFormer encoder
-                               → Contextual gene embeddings
-                               → Select HVGs / DEGs → Pool → Sample embedding
+```mermaid
+flowchart TD
+    X["Full coding transcriptome · 19,973 positions"] --> E["Sinusoidal expression encoding"]
+    X --> C["Global MLP · 19,973 → 2,560 → 768"]
+    I["Learned gene identity embedding"] --> N["Normalize each branch · fixed 1:1:1 sum · LayerNorm"]
+    E --> N
+    C --> N
+    N --> G["Residual weighted GCN · hidden width 256"]
+    G --> P["12-layer Performer · width 768"]
+    P --> H["Contextual gene embeddings"]
+    H --> S["Optional pooling after gene selection"]
+    H --> O["Expression head"]
+    X --> M["Actual missing fraction"]
+    M --> K["Gain and offset calibration"]
+    O --> K
 ```
 
-Gene selection belongs at the **output embedding stage**. The full expression matrix supplies the context used to encode every selected gene. The API's `interested_gene_idx` selects embeddings after the full-axis encoder; it also supports mean pooling over that selected set. See the [usage example](docs/usage.md#sample-embeddings-from-hvgs-or-degs).
+| Component | Configuration |
+|---|---|
+| Parameters | **154,551,299** |
+| Coding-gene vocabulary | **19,973** human Ensembl IDs |
+| Hidden width / layers / heads | **768 / 12 / 12** |
+| Attention | Performer, 256 random features per head |
+| Feed-forward / GCN hidden width | 3,072 / 256 |
+| Global transcriptome MLP | 19,973 → 2,560 → 768 |
+| Input fusion | Separately normalized gene ID, expression and global context; fixed **1:1:1** |
+| Dropout | Feed-forward / GCN: 0.1; attention: 0.05 |
+| Missingness calibration | 64-hidden-unit network; bounded expression gain and offset |
+| Expression scale | **Natural ln(TPM + 1)** |
+| GenePT / CLS token | Neither is used |
 
-## Performance
+The fixed fusion coefficients do not freeze the encoder, global MLP, GCN residual scale or calibrator. [Architecture comparison with Atlas](docs/architecture.md).
 
-### bulkformer-latest vs bulkformer-147M
+## Pretraining configuration
 
-The released checkpoint improves frozen-feature classification across all three evaluated phenotype tasks. Scores are **pooled out-of-fold weighted F1**, using the same samples, registered 10-fold assignments, and fixed cuML random forest settings.
+| Setting | Value |
+|---|---|
+| Data sources | ARCHS4, DiSignAtlas, GDC and GTEx |
+| Split | **711,826 train / 3,746 ID validation / 3,602 OOD validation** |
+| Objective | Dynamically masked expression MSE |
+| Added masking | Uniform **10–20% per sample**, centered at 15% |
+| Optimizer | AdamW, β=(0.9, 0.95), weight decay 0.01, gradient clipping 1.0 |
+| Learning rate | First **1%** of updates: linear warmup to **1e-4**; then constant |
+| Batch / precision | One GPU × 4 samples × 24 accumulation steps = **96**; BF16 |
+| Budget / released checkpoint | 20 epochs planned / **epoch 19** |
+| Selection | Minimum mean ID/OOD MSE at 10% masking |
 
-| Task | bulkformer-147M | bulkformer-latest | Gain |
-|---|---:|---:|---:|
-| Disease / state · DiSignAtlas | 0.9148 | **0.9293** | **+1.45 pp** |
-| Cancer type · TCGA | 0.8813 | **0.9173** | **+3.60 pp** |
-| Tissue · GTEx | 0.8607 | **0.9114** | **+5.07 pp** |
+Epoch-19 validation: **ID MSE 0.1477805855**, **OOD MSE 0.2003244350**, mean **0.1740525102**. [All validation mask rates](benchmarks/latest_pretraining.csv) · [Training JSON](configs/latest_training.json).
 
-Gains are absolute percentage points calculated from unrounded scores. The latest model has approximately **31% fewer parameters** than the nominal 147M model.
+## Input coverage matters
 
-The comparison uses each model's native vocabulary, feature dimension, and extraction precision; GTEx folds are grouped by donor. Source collections can overlap pretraining sources. Full settings and aggregate results are available in the [benchmark record](benchmarks/phenotype/README.md).
+Provide the **most complete available coding transcriptome**. Full gene coverage preserves context used by the model; substantial missingness can reduce performance. Training additionally masked 10–20% of source-available genes. This range is not a guarantee of accuracy at arbitrary total missingness, which also includes genes unavailable in the source data.
 
-<details>
-<summary><strong>Evaluation cohorts and reported scores</strong></summary>
+**To form a sample vector from HVGs or DEGs, still pass the full transcriptome.** First obtain contextual gene embeddings, then select those genes and pool their vectors. Selecting returned outputs does not shrink the encoder input.
 
-| Dataset | Samples | Classes | Split |
-|---|---:|---:|---|
-| DiSignAtlas | 10,688 | 19 | Stratified 10-fold |
-| TCGA | 9,780 | 33 | Stratified 10-fold |
-| GTEx | 19,616 | 54 | Donor-grouped stratified 10-fold |
-
-Encoders are frozen. The classifier uses 500 trees, maximum depth 16, `max_features="sqrt"`, `min_samples_leaf=2`, and seed 42. The registered 147M results are reused under the matched downstream protocol. Latest extraction uses BF16 and 768-dimensional features; 147M extraction uses FP16 and 643-dimensional features.
-
-- [Full precision scores](benchmarks/phenotype/metrics.csv)
-- [Aggregate fold results](benchmarks/phenotype/per_fold.csv)
-- [Protocol and checkpoint identities](benchmarks/phenotype/protocol.json)
-- [Original publication benchmark table](docs/benchmarks/paper-results.md)
-
-The original publication table uses a separate evaluation protocol. These records describe the retained phenotype evaluations; the demonstration notebook uses synthetic counts.
-
-</details>
-
-## Models and downloads
-
-| Model | Parameters | Hidden dim | Layers | Weights | Guide |
-|---|---:|---:|---:|---|---|
-| **bulkformer-latest** | **101.3M** | **768** | **12** | [Google Drive](https://drive.google.com/file/d/1ly4CNE6XHqHKSP1a5c0UGUeaSVC0Was1/view?usp=drivesdk) | [Model card](docs/models/bulkformer-latest.md) |
-
-
-The latest weights are distributed as **one complete `model.pt` file (406 MB)**. Its configuration, vocabulary, gene lengths, graph, and checksum manifest are available in the [same Google Drive folder](https://drive.google.com/drive/folders/1AfekiOBNs6GzPBbA9BDlpuoolZIWbGQ2). See the [download instructions](model/README.md). For the original 37M–147M releases, visit [BulkFormer](https://github.com/KangBoming/BulkFormer#-bulkformer-model-variants).
+Keep measured zeros as zeros. Omit unavailable genes or use `NaN`; the preparation function aligns the complete vocabulary and inserts the missing-value sentinel. Use human Ensembl gene IDs and declare the input scale explicitly. [Normalization and coverage guide](docs/input-guide.md).
 
 ## Quick start
-
-### 1. Set up the environment
 
 ```bash
 git clone https://github.com/KangBoming/bulkformer-latest.git
 cd bulkformer-latest
-conda env create -f configs/bulkformer-latest.yaml
-conda activate bulkformer-latest
+conda env create -f configs/inference.yaml
+conda activate bulkformer
+pip install -e . --no-deps
+jupyter lab
 ```
-
-### 2. Download the latest model
-
-Save `model.pt` and its five accompanying resource files from the [model folder](https://drive.google.com/drive/folders/1AfekiOBNs6GzPBbA9BDlpuoolZIWbGQ2) into `model/bulkformer-latest/`. The preparation step verifies all six files against the published [SHA256 manifest](model/downloads/bulkformer-latest.json).
-
-<details>
-<summary>Required model files</summary>
-
-```text
-model/bulkformer-latest/
-├── model.pt
-├── model_config.json
-├── gene_vocab.csv
-├── edge_index.pt
-├── edge_weight.pt
-└── manifest.json
-```
-
-If Drive wraps a folder download in a ZIP, extract it first so these files are directly inside the model directory.
-
-</details>
-
-### 3. Run the GPU notebook
-
-```bash
-CUDA_VISIBLE_DEVICES=0 jupyter lab notebooks/bulkformer-latest_feature_extraction.ipynb
-```
-
-The notebook demonstrates sample, gene, and expression outputs on four synthetic count profiles. Start with **batch size 1**; the notebook selects a supported precision for your GPU. Inputs use samples × Ensembl gene IDs; raw counts are converted to natural `ln(TPM+1)` with the released gene lengths.
-
-<details>
-<summary><strong>Minimal Python example</strong></summary>
-
-Run from the repository root after downloading the model files:
 
 ```python
 import pandas as pd
-from utils.latest import (
-    prepare_latest_bundle, load_latest_model,
-    normalize_data, main_gene_selection, extract_feature,
-)
+from bulkformer import download_model, load_latest, prepare_latest_input, extract_latest
 
-model_dir = prepare_latest_bundle("model/bulkformer-latest")
-model, vocab, metadata = load_latest_model(model_dir, device="cuda")
+model_dir = download_model("latest", "model/latest")
+model, vocab = load_latest(model_dir, device="cuda")
+counts = pd.read_csv("examples/demo_counts.csv", index_col=0)
+expression, coverage = prepare_latest_input(counts, vocab, input_scale="counts")
 
-counts = pd.read_csv("data/latest_demo_counts.csv", index_col=0)
-expression = normalize_data(counts, vocab)
-aligned, _, _ = main_gene_selection(expression, vocab["canonical_ensg"])
-sample_features = extract_feature(model, aligned.to_numpy(), batch_size=1)
+genes = vocab.index[vocab["symbol"].isin(["TP53", "EGFR", "BRCA1"])].to_numpy()
+features = extract_latest(model, expression, gene_indices=genes,
+                          return_expression=True, batch_size=1)
+gene_embeddings = features["gene_embeddings"]
+sample_embeddings = features["sample_embeddings"]
 ```
 
-For normalized expression, missing values, precision options, and other output types, see the [usage guide](docs/usage.md).
+The [notebook](notebooks/bulkformer-latest_feature_extraction.ipynb) includes actual GPU outputs: input coverage, selected genes, embedding previews, subset pooling and masked expression recovery. Its eight synthetic profiles demonstrate usage, not biological performance. Use `precision="fp32"` when full-precision inference is needed; sparse GPU reductions can still produce small numerical variation. [Validation record](model/validation/gpu.json).
 
-</details>
+The [Google Drive folder](https://drive.google.com/drive/folders/1wKXEgKk_oPkmaCITi4ASs-05FHl6qkvZ) contains **one complete FP32 `model.pt`**, model/training configuration, gene vocabulary, graph files, environment and checksums. [Download details](model/README.md).
 
-For the original 37M–147M models, use the notebook, environment, and downloads in the [original BulkFormer project](https://github.com/KangBoming/BulkFormer), as described in the [predecessor guide](docs/models/original-models.md).
+## PRIMO and model selection
 
-## Documentation
+Official bulk leaderboard snapshot, **2026-11-04**, 19 entries; all 44 datasets and 6,390 samples covered:
 
-| Resource | Contents |
-|---|---|
-| [Latest model card](docs/models/bulkformer-latest.md) | Architecture, pretraining, checkpoint identity, and input / output conventions |
-| [Usage guide](docs/usage.md) | Installation, GPU inference, data preparation, and feature extraction |
-| [Phenotype benchmark](benchmarks/phenotype/README.md) | Latest vs 147M results, folds, classifier settings, and provenance |
-| [Original BulkFormer project](docs/models/original-models.md) | Links to the original 37M–147M models and workflow |
-| [Documentation index](docs/README.md) | Complete guides and repository navigation |
-| [Changelog](CHANGELOG.md) | Release history and updates |
+| Model pipeline | Rank | Elo |
+|---|---:|---:|
+| BulkFormer-Atlas + HVG | **1 / 19** | **1027** |
+| BulkFormer-Latest + HVG | **6 / 19** | **985** |
+| BulkFormer-Atlas | 8 / 19 | 972 |
+| BulkFormer-Latest | 14 / 19 | 838 |
 
-<details>
-<summary>Repository structure</summary>
+The external aliases are `BulkFormer-variant` for Atlas and `BulkFormer-V3Plus` for Latest. Latest's submission uses this same epoch-19 checkpoint. `+ HVG` denotes concatenation with the organizer's 1,200-gene expression baseline. Rankings can change; the first-place result applies to Atlas **with** HVG.
 
-```text
-bulkformer-latest/
-├── configs/             Environment configurations
-├── notebooks/           Feature extraction examples
-├── docs/                Model cards, guides, and figures
-├── benchmarks/          Aggregate results and evaluation protocols
-├── model/               Download manifests, validation, local weights
-├── data/                Synthetic example counts
-├── utils/latest/        Latest model and inference API
-└── tests/               Input, pooling, and download integrity checks
-```
+Atlas has the stronger PRIMO aggregate sample-level result. Latest's gene-level workflow recommendation follows its architecture and objective; a matched gene-level Atlas-versus-Latest benchmark is still needed before claiming superiority. [Full protocol and category results](benchmarks/primo/README.md) · [Live board](https://primomics-primo-eval.hf.space/?tab=leaderboard).
 
-</details>
+## Original models and citation
 
-## Publication
+The original 37M–147M models, downloads and publication notebook are retained in the **[BulkFormer family repository](https://github.com/KangBoming/BulkFormer#original-model-family)**. They use separate configurations and resources.
 
-For the BulkFormer methodology, please cite the original model-family paper:
+Kang, B., Fan, R., Yi, M., Cui, C., & Cui, Q. **BulkFormer: A large-scale foundation model for bulk transcriptomes.** *Cell Systems*, 101657 (2026). [DOI](https://doi.org/10.1016/j.cels.2026.101657).
 
-**Boming Kang, Rui Fan, Meizheng Yi, Chunmei Cui, and Qinghua Cui.**<br>
-*BulkFormer: A large-scale foundation model for bulk transcriptomes.*<br>
-**Cell Systems**, 101657 (2026). [DOI: 10.1016/j.cels.2026.101657](https://doi.org/10.1016/j.cels.2026.101657).
-
-```bibtex
-@article{kang2026bulkformer,
-  title = {BulkFormer: A large-scale foundation model for bulk transcriptomes},
-  author = {Kang, Boming and Fan, Rui and Yi, Meizheng and Cui, Chunmei and Cui, Qinghua},
-  journal = {Cell Systems},
-  year = {2026},
-  pages = {101657},
-  doi = {10.1016/j.cels.2026.101657}
-}
-```
-
-For results obtained with `bulkformer-latest`, also report its checkpoint ID from the [model card](docs/models/bulkformer-latest.md).
-
-## License and contact
-
-Code is released under the [MIT License](LICENSE).
-
-**Boming Kang:** [kangbm@bjmu.edu.cn](mailto:kangbm@bjmu.edu.cn) · **Qinghua Cui:** [cuiqinghua@bjmu.edu.cn](mailto:cuiqinghua@bjmu.edu.cn)
+The current Atlas and Latest checkpoints are subsequent research releases, not the checkpoints evaluated in that paper. Report the immutable checkpoint ID and protocol in analyses. Code: [MIT](LICENSE). Contact: [Boming Kang](mailto:kangbm@bjmu.edu.cn) · [Qinghua Cui](mailto:cuiqinghua@bjmu.edu.cn).

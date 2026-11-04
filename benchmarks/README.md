@@ -1,9 +1,7 @@
-# Benchmarks
+# Evaluation records
 
-| Evaluation | Record |
-|---|---|
-| Frozen sample phenotype classification: latest vs 147M | [phenotype/README.md](phenotype/README.md) |
-| Original publication benchmarks | [Paper results](../docs/benchmarks/paper-results.md) |
-| Release inference and GPU checks | [Validation record](../model/validation/bulkformer-latest.json) |
+- [PRIMO](primo/README.md): official frozen-feature patient/sample tasks; Atlas and Latest released checkpoints.
+- [Latest pretraining validation](latest_pretraining.csv): expression recovery at seven mask rates, epoch 19.
+- [Original paper](../docs/original-paper.md): historical publication protocol and original models.
 
-The phenotype records contain aggregate scores, fold summaries, and protocol fingerprints. They identify the evaluated checkpoint independently of the public `bulkformer-latest` label.
+The epoch-19 Latest checkpoint does not yet have a complete matched gene-level benchmark against Atlas. Previously published phenotype tables for the former Latest release are not used to describe this new checkpoint. Compare scores only under the same data and probe protocol; checkpoint selection by reconstruction MSE is distinct from selection by downstream performance.

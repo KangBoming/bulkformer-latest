@@ -1,15 +1,11 @@
 # Documentation
 
-| Topic | Guide |
+| Guide | Contents |
 |---|---|
-| Current model | [bulkformer-latest model card](models/bulkformer-latest.md) |
-| Installation, inputs, outputs, GPU inference | [Usage guide](usage.md) |
-| Original 37M–147M models | [Original project and workflow](models/original-models.md) |
-| Latest vs 147M phenotype results | [Matched benchmark](../benchmarks/phenotype/README.md) |
-| Original publication results | [Paper benchmark table](benchmarks/paper-results.md) |
-| Model downloads and required files | [Model resources](../model/README.md) |
-| Jupyter examples | [Notebook index](../notebooks/README.md) |
-| Code organization and checkpoint identity | [Implementation guide](../utils/README.md) |
-| Release history | [Changelog](../CHANGELOG.md) |
-
-The public name `bulkformer-latest` currently identifies the V1 Plus Stage1 epoch 17 / update 126,055 checkpoint. Its immutable checkpoint ID and weight SHA256 are recorded in the model card and download manifest.
+| [Atlas](models/atlas.md) | Sample encoder, architecture, training and checkpoint |
+| [Latest](models/latest.md) | Full-transcriptome gene encoder and expression calibration |
+| [Architecture comparison](architecture.md) | How objectives and output representations differ |
+| [Input guide](input-guide.md) | Gene IDs, normalization, coverage and pooling |
+| [PRIMO results](../benchmarks/primo/README.md) | Official results and reproducibility record |
+| [Original models](original-paper.md) | Publication family and original workflow |
+| [Migration](migration.md) | Fixed release names and the previous Latest checkpoint |

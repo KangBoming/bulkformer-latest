@@ -1,16 +1,12 @@
 # Changelog
 
-## 2026-10-09 — Standalone bulkformer-latest release
+## 2026-11-04
 
-- Publish the V1 Plus Stage1 epoch 17 / update 126,055 checkpoint as **bulkformer-latest** in its own repository: 101.3M parameters, 19,973 human genes, and 768-dimensional representations.
-- Provide one complete Google Drive weight file with configuration, vocabulary, graph, environment, and checksums in the model folder.
-- Include a GPU-validated Jupyter workflow for sample embeddings, contextual gene embeddings, and expression predictions using synthetic example counts.
-- Match the original BulkFormer notebook's short-cell style and retain executed GPU outputs for data previews, missing-gene counts, and all three feature types.
-- Emphasize complete coding-gene input, the recommended ≤10% missingness target, and full-transcriptome encoding before HVG/DEG selection and pooling.
-- Redraw the README architecture figure with a scientific panel layout, explicit normalization and residual paths, three readouts, and the optional HVG/DEG pooling workflow.
-- Publish retained frozen-feature phenotype comparisons with bulkformer-147M on identical samples, fold assignments, and classifier settings.
-- Organize inference, notebooks, environments, documentation, figures, download metadata, and benchmark records into dedicated directories.
+- Make the main BulkFormer repository the entry point for the model family.
+- Release BulkFormer-Atlas: epoch 10 / update 320,000, previously submitted as BulkFormer-variant.
+- Release BulkFormer-Latest: epoch 19 / update 140,885, a 154.55M full-transcriptome model.
+- Add explicit per-model normalization, verified complete weight bundles, GPU notebooks and official PRIMO results.
+- Move original publication models into the Original model family table and preserve the original workflow.
+- Retire the earlier V1 Plus-based Latest release from active tutorials, with a fixed historical tag for reproducibility.
 
-Checkpoint ID: `v1plus-stage1-epoch17-update126055`. The public name and repository organization preserve the model tensors and trained architecture.
-
-Earlier model-family updates remain documented in the [original BulkFormer project](https://github.com/KangBoming/BulkFormer).
+Original publication updates are retained in [the historical documentation](docs/original-paper.md).
