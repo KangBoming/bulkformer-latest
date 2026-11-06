@@ -15,6 +15,8 @@
 
 **BulkFormer-Latest** encodes the complete available human coding transcriptome to produce **768-dimensional contextual gene embeddings** and expression predictions. Use it for gene features, gene-set analyses and expression recovery. For sample-level prediction, start with **[BulkFormer-Atlas](https://github.com/KangBoming/BulkFormer)**.
 
+> **2026-11-06 · Checkpoint update:** The download now provides the **final epoch-20 checkpoint**, with updated checksums and an executed GPU tutorial. The published PRIMO results remain those of epoch 19; epoch 20 has not been evaluated on PRIMO. [Download guide](model/README.md).
+
 > **2026-11-04 · New release:** Complete weights, inference resources and an executed GPU tutorial are available. Users of the previous Latest release should follow the [migration guide](docs/migration.md).
 
 ## Model architecture
@@ -94,7 +96,7 @@ The official bulk board contains **59 tasks · 39 cohorts · 4,922 patients**, w
 <details>
 <summary><strong>Submission names and evaluation protocol</strong></summary>
 
-- **Atlas** appears as `BulkFormer-variant`; **Latest** appears as `BulkFormer-V3Plus`. Older rows named `BulkFormer-Latest` refer to the archived release.
+- **Atlas** appears as `BulkFormer-variant`; the **epoch-19 Latest** submission appears as `BulkFormer-V3Plus`. These scores do not evaluate the current final epoch-20 download. Older rows named `BulkFormer-Latest` refer to the archived release.
 - **+ HVG** concatenates the embedding with the organizer's **1,200-gene expression baseline**. It is separate from Atlas's 4,096-gene input panel. Atlas alone ranks 8th in this snapshot.
 - Rankings can change, and small Elo differences do not establish statistical significance. [Full results and protocol](benchmarks/primo/README.md) document preprocessing, public-task model selection and the limits of the pretraining-overlap audit.
 
